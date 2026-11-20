@@ -1,0 +1,217 @@
+{
+  "variant_id": "SB-P19",
+  "pm2_key_whitespace": 0,
+  "reviews_key_whitespace": 0,
+  "pm2_rows": 335,
+  "pm2_unique_order_id": 335,
+  "pm2_null_order_id": 0,
+  "pm2_dup_order_id": 0,
+  "reviews_rows": 192,
+  "reviews_unique_order_id": 192,
+  "reviews_dup_order_id": 0,
+  "matched_review_order_id": 192,
+  "unmatched_reviews": 0,
+  "pm2_pii_cols": [],
+  "capstone_rows": 335,
+  "unique_order_id": 335,
+  "duplicate_order_id": 0,
+  "direct_pii_field_count": 0,
+  "no_review_orders": 143,
+  "reviewed_no_text": 11,
+  "reviewed_with_text": 181,
+  "money_before": {
+    "subtotal_amount": "40199000",
+    "discount_amount": "2225000",
+    "total_amount": "42218000",
+    "successful_payment_amount": "38845000",
+    "refunded_payment_amount": "1684000",
+    "net_payment_amount": "37161000"
+  },
+  "money_after": {
+    "subtotal_amount": "40199000",
+    "discount_amount": "2225000",
+    "total_amount": "42218000",
+    "successful_payment_amount": "38845000",
+    "refunded_payment_amount": "1684000",
+    "net_payment_amount": "37161000"
+  },
+  "join_judgment": "PASS",
+  "kpi_unfiltered": {
+    "total_orders": 335,
+    "net_payment": 37161000.0,
+    "review_coverage": 57.3134328358209,
+    "late_delivery_rate": 31.1864406779661,
+    "_late_n": 92,
+    "_delivered_valid": 295
+  },
+  "kpi_definitions": {
+    "Total Orders": "COUNT DISTINCT order_id pada populasi terpilih",
+    "Net Payment Value": "SUM(successful_payment_amount) - SUM(refunded_payment_amount); failed attempts tidak menambah success",
+    "Review Coverage": "(order dengan review / seluruh order) x 100%; No Review masuk denominator",
+    "Late Delivery Rate": "(delivered order terlambat / delivered order dengan informasi waktu valid) x 100%; cancelled/incomplete bukan 'tepat waktu'",
+    "AOV (opsional)": "net payment / order dengan success_amt > 0"
+  },
+  "review_coverage_completed_orders": 65.08474576271186,
+  "sentiment_manual_n": 64,
+  "sentiment_manual_agreement": 0.8125,
+  "bq_tables": {
+    "cancel_by_month": [
+      {
+        "month": "2026-01",
+        "total_orders": 102,
+        "cancelled": 10,
+        "failed": 6,
+        "refunded": 4,
+        "cancel_rate_pct": 9.8,
+        "failed_rate_pct": 5.9
+      },
+      {
+        "month": "2026-02",
+        "total_orders": 104,
+        "cancelled": 11,
+        "failed": 6,
+        "refunded": 5,
+        "cancel_rate_pct": 10.6,
+        "failed_rate_pct": 5.8
+      },
+      {
+        "month": "2026-03",
+        "total_orders": 129,
+        "cancelled": 19,
+        "failed": 15,
+        "refunded": 4,
+        "cancel_rate_pct": 14.7,
+        "failed_rate_pct": 11.6
+      }
+    ],
+    "late_by_zone": [
+      {
+        "customer_zone": "West",
+        "delivered_valid": 72,
+        "late_orders": 34.0,
+        "late_rate_pct": 47.2
+      },
+      {
+        "customer_zone": "South",
+        "delivered_valid": 48,
+        "late_orders": 16.0,
+        "late_rate_pct": 33.3
+      },
+      {
+        "customer_zone": "North",
+        "delivered_valid": 64,
+        "late_orders": 20.0,
+        "late_rate_pct": 31.2
+      },
+      {
+        "customer_zone": "East",
+        "delivered_valid": 62,
+        "late_orders": 13.0,
+        "late_rate_pct": 21.0
+      },
+      {
+        "customer_zone": "Central",
+        "delivered_valid": 49,
+        "late_orders": 9.0,
+        "late_rate_pct": 18.4
+      }
+    ],
+    "rating_vs_late": [
+      {
+        "kelompok": "Tepat waktu",
+        "n_review": 131,
+        "avg_rating": 3.92,
+        "median_rating": 4.0,
+        "negative": 14,
+        "negative_pct": 10.7
+      },
+      {
+        "kelompok": "Terlambat",
+        "n_review": 61,
+        "avg_rating": 2.87,
+        "median_rating": 3.0,
+        "negative": 25,
+        "negative_pct": 41.0
+      }
+    ],
+    "order_status": [
+      {
+        "status": "Completed",
+        "orders": 295,
+        "pct_of_orders": 88.1
+      },
+      {
+        "status": "Failed",
+        "orders": 27,
+        "pct_of_orders": 8.1
+      },
+      {
+        "status": "Refunded",
+        "orders": 13,
+        "pct_of_orders": 3.9
+      }
+    ]
+  },
+  "dashboard_filter_tests": [
+    {
+      "test_filter": "tanpa filter",
+      "rows": 335,
+      "orders": 335,
+      "late_rate": 31.1864406779661,
+      "match_pandas": true
+    },
+    {
+      "test_filter": "bulan=2026-03",
+      "rows": 129,
+      "orders": 129,
+      "late_rate": 32.72727272727273,
+      "match_pandas": true
+    },
+    {
+      "test_filter": "restoran=SwiftBite Partner 19",
+      "rows": 15,
+      "orders": 15,
+      "late_rate": 38.46153846153846,
+      "match_pandas": true
+    },
+    {
+      "test_filter": "bulan=2026-03 & restoran=SwiftBite Partner 19",
+      "rows": 6,
+      "orders": 6,
+      "late_rate": 40.0,
+      "match_pandas": true
+    },
+    {
+      "test_filter": "sentimen=Negative",
+      "rows": 39,
+      "orders": 39,
+      "late_rate": 64.1025641025641,
+      "match_pandas": true
+    },
+    {
+      "test_filter": "kombinasi nol baris",
+      "rows": 0,
+      "orders": 0,
+      "late_rate": NaN,
+      "match_pandas": true
+    }
+  ],
+  "final_csv_rows": 335,
+  "final_csv_unique_order_id": 335,
+  "sentiment_counts": {
+    "Positive": 79,
+    "Neutral": 63,
+    "Negative": 39,
+    "No Text": 11
+  },
+  "qa_checks": {
+    "rows == PM2 rows": true,
+    "unique order_id == rows": true,
+    "order_id null == 0": true,
+    "No PII / raw customer_id": true,
+    "No Review != No Text": true,
+    "No Review -> sentiment kosong": true,
+    "label sentimen valid": true,
+    "net payment total unchanged": true
+  }
+}

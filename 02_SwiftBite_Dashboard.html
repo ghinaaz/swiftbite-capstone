@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwiftBite Insight Hub SB-P19</title>
+<style>
+:root{--o:#E8590C;--o2:#F59F42;--tx:#2B1A10;--mut:#7A5A44;--bg:#FFF8F0;--line:#F1DCC6;--side:220px}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+[hidden]{display:none!important}
+button{font-family:inherit;cursor:pointer}
+select{font-family:inherit}
+/* ---------- sidebar ---------- */
+.side{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:linear-gradient(180deg,#FFE8D6,#FFD7B8);padding:18px 14px;display:flex;flex-direction:column;gap:8px;box-shadow:4px 0 18px rgba(120,60,10,.14);z-index:70;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 12px;border-bottom:1px solid rgba(232,89,12,.25);margin-bottom:6px}
+.brand .lg{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#F59F42,#E8590C);display:grid;place-items:center;font-size:20px;box-shadow:0 6px 14px rgba(232,89,12,.35)}
+.brand b{display:block;font-size:18px;color:var(--o)}.brand small{display:block;font-size:11px;letter-spacing:.08em;color:var(--mut);font-weight:700}
+.nv{display:flex;align-items:center;gap:10px;padding:13px 12px;border:0;border-radius:12px;background:transparent;font-size:15px;font-weight:600;color:var(--tx);text-align:left;white-space:nowrap;transition:background .15s,transform .15s}
+.nv:hover{background:rgba(255,255,255,.65);transform:translateX(2px)}
+.nv[aria-current=page]{background:var(--o);color:#fff;box-shadow:0 8px 16px rgba(232,89,12,.38)}
+.nv:focus-visible,.fb:focus-visible,.ins:focus-visible,.inf:focus-visible,select:focus-visible,.tab:focus-visible,.fr:focus-visible{outline:3px solid #FFD166;outline-offset:2px}
+.sp{flex:1;min-height:6px}
+.qs{background:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 4px 14px rgba(120,60,10,.14)}
+.qs h5{margin:0 0 8px;font-size:12px;letter-spacing:.06em;color:var(--o);text-transform:uppercase}
+.qs div{display:flex;justify-content:space-between;font-size:13px;margin:5px 0}.qs b{font-size:14px}
+.xb{border:2px solid var(--o);background:#fff;color:var(--o);border-radius:12px;padding:11px;font-weight:700;font-size:14px;transition:transform .15s,box-shadow .15s}
+.xb:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(232,89,12,.25)}.xb:active{transform:translateY(1px)}
+.xb[aria-pressed=true]{background:var(--o);color:#fff}
+.vtag{text-align:center;font-size:12px;color:var(--mut)}
+/* ---------- main ---------- */
+.main{margin-left:var(--side);padding:22px 28px 44px}
+.ttl{font-size:21px;font-weight:800;color:var(--o);margin:0}
+.sub{margin:2px 0 0;color:var(--mut);font-size:13px}
+.greet{font-size:31px;font-weight:800;margin:14px 0 2px}
+.greet2{margin:0 0 14px;color:var(--mut);font-size:13px}
+/* ---------- filter banner ---------- */
+.fbar{background:linear-gradient(120deg,#E8590C,#F59F42);color:#fff;border-radius:18px;padding:16px 20px;box-shadow:0 12px 28px rgba(232,89,12,.35);position:relative}
+.fbar.stuck{position:fixed;top:8px;left:calc(var(--side) + 28px);right:28px;z-index:60;padding:10px 16px}
+.fhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ft{display:flex;align-items:center;gap:10px;margin-right:auto}
+.ft b{font-size:18px;display:block}.ft small{display:block;font-size:13px;opacity:.95}
+.fbar.stuck .ft small{display:none}
+.fchips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.95);color:#C2410C;border-radius:20px;padding:5px 6px 5px 12px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.chip button{border:0;background:#FFE8D6;color:#C2410C;border-radius:50%;width:20px;height:20px;line-height:20px;font-size:12px;padding:0}
+.fcount{background:rgba(43,26,16,.28);border-radius:12px;padding:9px 14px;font-size:14px;white-space:nowrap}
+.fcount b{color:#FFE082;font-size:16px}
+.fb{border:0;border-radius:12px;padding:10px 16px;font-weight:700;font-size:14px;background:#fff;color:#C2410C;box-shadow:0 3px 8px rgba(0,0,0,.15);transition:transform .15s}
+.fb:hover:not(:disabled){transform:translateY(-2px)}.fb:active:not(:disabled){transform:translateY(1px)}
+.fb:disabled{opacity:.45;cursor:default}
+#fopen{display:none}.fbar.stuck #fopen{display:inline-block}
+.fsel{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}
+.fsel label{font-size:13px;font-weight:700;display:flex;flex-direction:column;gap:6px}
+.fsel select{height:48px;border-radius:12px;border:3px solid transparent;background:#fff;color:var(--tx);font-size:16px;padding:0 12px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.fsel select:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.fsel select.on{border-color:#FFD166;font-weight:700}
+.fbar.stuck .fsel{display:none}
+.fbar.stuck.open .fsel{display:grid;position:absolute;left:0;right:0;top:calc(100% + 8px);background:linear-gradient(120deg,#E8590C,#F59F42);padding:14px 16px;border-radius:16px;box-shadow:0 12px 28px rgba(232,89,12,.35);margin-top:0}
+/* ---------- cards ---------- */
+.card{background:linear-gradient(180deg,#fff,#FFFAF4);border:1px solid #F6E3D0;border-radius:18px;padding:16px 18px;box-shadow:0 1px 2px rgba(120,60,10,.08),0 10px 26px rgba(120,60,10,.12);display:flex;flex-direction:column;gap:10px}
+.fc{perspective:1600px;transition:transform .2s}
+.fc:hover{transform:translateY(-3px)}
+.flip{display:grid;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.7,.2,1);height:100%}
+.fc.flipped .flip{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-width:0}
+.back{transform:rotateY(180deg);background:linear-gradient(180deg,#FFF3E6,#FFFAF4)}
+.fc:not(.flipped) .back,.fc.flipped .front{pointer-events:none}
+.flash{animation:fl .7s}
+@keyframes fl{0%{box-shadow:0 0 0 4px rgba(245,159,66,.8),0 10px 26px rgba(120,60,10,.12)}100%{box-shadow:0 1px 2px rgba(120,60,10,.08),0 10px 26px rgba(120,60,10,.12)}}
+@media (prefers-reduced-motion:reduce){.flip{transition:none}.fc:hover{transform:none}.flash{animation:none}}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:18px 0 16px}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.cards>*{grid-column:span 2;min-width:0}
+.cards>.w4{grid-column:span 4}.cards>.w6{grid-column:span 6}
+.cards>.solo{grid-column:1/-1}
+.kh{display:flex;align-items:center;gap:10px;padding-right:30px}
+.ico{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#F59F42,#E8590C);display:grid;place-items:center;font-size:19px;box-shadow:0 5px 12px rgba(232,89,12,.35);flex:none}
+.kl{font-weight:700;color:var(--mut);font-size:14px}
+.kv{font-size:26px;white-space:nowrap;font-weight:800;margin-top:2px}
+.kr{display:flex;flex-direction:column;gap:6px}.kr>div:last-child{align-self:flex-end;margin-top:-4px}
+.ks{font-size:12.5px;color:var(--mut);min-height:20px}
+.dlt{display:inline-block;border-radius:8px;padding:2px 8px;font-weight:700;font-size:12px}
+.dlt.up{background:#E6F6EE;color:#12794F}.dlt.dn{background:#FDE8E8;color:#B42318}
+.inf{position:absolute;right:14px;top:14px;width:26px;height:26px;border-radius:50%;border:1.5px solid #F2C9A8;background:#FFE8D6;color:#C2410C;font-weight:800;font-size:13px;padding:0}
+.inf:hover{background:var(--o);color:#fff}
+.kpi{position:relative}
+.kb{font-size:14px;line-height:1.45;margin:6px 0 0}.kf{font-size:13px;background:#FFE8D6;border-radius:10px;padding:8px 10px;margin:0;color:#7A3A10;font-weight:600}
+.ch{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}.ch h3{min-width:0}
+.badge{white-space:nowrap;background:var(--o);color:#fff;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:800}
+.ch h3{margin:0;font-size:16px}
+.ch .rt{margin-left:auto;display:flex;gap:10px;align-items:center;flex:none}.ins{white-space:nowrap}
+.hl{margin:0;color:#C2410C;font-size:13.5px;font-weight:600;min-height:18px}
+.ins{border:1.5px solid #F2C9A8;background:#FFE8D6;color:#C2410C;border-radius:20px;padding:6px 14px;font-weight:800;font-size:13px;transition:transform .15s}
+.ins:hover{transform:translateY(-2px);background:var(--o);color:#fff}
+.tabs{display:flex;background:#F3E4D6;border-radius:20px;padding:3px}
+.tab{border:0;background:transparent;border-radius:17px;padding:6px 14px;font-weight:700;font-size:13px;color:var(--mut)}
+.tab[aria-selected=true]{background:#fff;color:var(--o);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.cb{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.bk{border-radius:12px;padding:10px 12px}.bk h4{margin:0 0 4px;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}.bk p{margin:0;font-size:14px;line-height:1.45}
+.bk.ar{background:#fff;border:1px solid var(--line)}.bk.ar h4{color:var(--mut)}
+.bk.tm{background:#FFF3C4}.bk.tm h4{color:#7A5A00}
+.bk.mk{background:#FFE8D6}.bk.mk h4{color:#C2410C}
+/* ---------- bar chart ---------- */
+.pn{background:#FFF8F0;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.pnh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;white-space:nowrap;margin-bottom:8px;font-weight:700;color:var(--mut);font-size:13px}
+.pnh b{font-size:20px;color:var(--tx)}.pnh small{font-weight:600;font-size:11.5px;color:var(--mut)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plot{position:relative;height:224px}
+.tks,.grd{position:absolute;left:0;right:0;top:52px;bottom:0}
+.tks span{position:absolute;left:0;transform:translateY(50%);font-size:12px;color:var(--mut)}
+.grd i{position:absolute;left:38px;right:0;height:1px;background:var(--line)}
+.cols{position:absolute;left:38px;right:0;top:0;bottom:0;display:flex;gap:12px;padding:0 8px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0}
+.bar{width:min(62px,72%);height:calc((100% - 52px) * var(--p));min-height:2px;border-radius:8px 8px 0 0;box-shadow:0 4px 10px rgba(120,60,10,.22)}
+.stk{width:min(62px,72%);height:calc((100% - 52px) * var(--p));min-height:2px;display:flex;flex-direction:column;border-radius:8px 8px 0 0;overflow:hidden;box-shadow:0 4px 10px rgba(120,60,10,.22)}
+.stk span{display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
+.vl{font-size:13px;font-weight:800;color:var(--tx);margin-bottom:4px;white-space:nowrap}
+.cp{font-size:11.5px;font-weight:800;border-radius:10px;padding:1px 8px;margin-bottom:6px;white-space:nowrap}
+.cp.up{background:#E6F6EE;color:#12794F}.cp.dn{background:#FDE8E8;color:#B42318}
+.xl{display:flex;gap:12px;padding:6px 8px 0 46px}.xl span{flex:1;text-align:center;font-size:13px;font-weight:700}
+.lgd{display:flex;gap:14px;font-size:12.5px;color:var(--mut);margin-top:6px;flex-wrap:wrap}.lgd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:#FFF0E3;border-radius:12px;padding:10px 14px}
+.strip div{font-size:12px;color:var(--mut)}.strip b{display:block;font-size:14px;color:#C2410C;margin-top:2px}
+/* ---------- sentimen ---------- */
+.dn-wrap{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}
+.donut{position:relative;width:168px;height:168px;flex:none}
+.donut svg{width:100%;height:100%;transform:rotate(0deg);filter:drop-shadow(0 6px 8px rgba(120,60,10,.22))}
+.donut .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.donut .mid b{font-size:30px;line-height:1}.donut .mid span{font-size:11px;letter-spacing:.08em;color:var(--mut);font-weight:700}
+.sl{list-style:none;margin:0;padding:0;flex:1;min-width:190px}
+.sl li{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:4px 0}
+.sl i{width:11px;height:11px;border-radius:50%;flex:none}.sl .n{margin-left:auto;font-weight:800}.sl em{font-style:normal;color:var(--mut);min-width:64px;text-align:right}
+.cov{background:#FFF0E3;border-radius:12px;padding:10px 12px;font-size:13px}
+.cov b{color:#C2410C}.trk{height:9px;background:#F1DCC6;border-radius:6px;margin-top:6px;overflow:hidden}.trk div{height:100%;border-radius:6px;background:linear-gradient(90deg,#F59F42,#E8590C)}
+/* ---------- zona ---------- */
+.zr{display:grid;grid-template-columns:26px 1fr auto;gap:2px 10px;align-items:center;margin:7px 0}
+.rk{width:24px;height:24px;border-radius:50%;background:#EADBCD;display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--mut)}
+.zr.top .rk{background:var(--o);color:#fff}
+.zr b{font-size:14px}.zv{font-weight:800;font-size:14px;color:var(--mut)}.zr.top .zv{color:var(--o)}.zv small{font-weight:600;color:var(--mut);font-size:12px}
+.zr .trk{grid-column:2/4;margin-top:0}.zr .trk div{background:#D9B79C}.zr.top .trk div{background:linear-gradient(90deg,#F59F42,#E8590C)}
+/* ---------- BQ4 ---------- */
+.cmp2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cmp{border-radius:14px;padding:12px 16px;border:1px solid}
+.cmp.l{background:#FFF1F0;border-color:#F6C9C4}.cmp.o{background:#EEF8F2;border-color:#BFE3D0}
+.cmp .tg{display:inline-block;font-size:12px;font-weight:800;border-radius:8px;padding:2px 9px;margin-bottom:6px}
+.cmp.l .tg{background:#FBD5D1;color:#B42318}.cmp.o .tg{background:#CDEBDB;color:#12794F}
+.cmp .big{font-size:36px;font-weight:800;line-height:1.1}.cmp.l .big{color:#D64545}.cmp.o .big{color:#1B9E6B}.cmp .big small{font-size:12.5px;font-weight:600;color:var(--mut);margin-left:6px}
+.cmp .rw{display:flex;justify-content:space-between;font-size:13px;margin:4px 0;color:var(--mut)}.cmp .rw b{color:var(--tx)}
+.cmp.l .trk div{background:#D64545}.cmp.o .trk div{background:#1B9E6B}
+.hb{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.hr{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;margin:8px 0;font-weight:700;font-size:13px}
+.hr .t{height:22px;background:#F3E6D8;border-radius:11px;position:relative;overflow:hidden}
+.hr .t div{height:100%;border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:12px;font-weight:800;min-width:34px}
+.axs{display:grid;grid-template-columns:110px 1fr;gap:10px}.axs div{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut)}
+.note{font-size:12.5px;color:var(--mut);margin:0}
+/* ---------- gauge ---------- */
+.gg{position:relative;width:290px;max-width:100%;height:162px;margin:auto}
+.gg svg{width:100%;height:100%;filter:drop-shadow(0 6px 8px rgba(120,60,10,.2))}
+.gg .mid{position:absolute;left:0;right:0;bottom:2px;text-align:center}.gg .mid b{font-size:30px;display:block;line-height:1}.gg .mid span{font-size:11px;letter-spacing:.08em;color:var(--mut);font-weight:700}
+.st3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.st3 div{background:#FFF0E3;border-radius:12px;padding:8px 10px;font-size:12.5px;color:var(--mut);border-left:4px solid}
+.st3 b{display:block;font-size:17px;color:var(--tx)}
+/* ---------- ringkasan ---------- */
+.fr{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 11px;margin-bottom:8px;font-size:13px;line-height:1.35;transition:transform .15s,box-shadow .15s}
+.fr:hover{transform:translateX(3px);box-shadow:0 6px 14px rgba(120,60,10,.14)}
+.fr .id{background:var(--o);color:#fff;font-weight:800;border-radius:7px;padding:3px 7px;font-size:12px}.fr .ar{color:var(--o);font-weight:800}
+.iv{display:grid;gap:14px}.iv .card h3{margin:0}
+.empty{display:grid;place-items:center;min-height:110px;color:var(--mut);font-weight:600}
+@media (max-width:1180px){.kpis{grid-template-columns:repeat(3,1fr)}.cards>*,.cards>.w4{grid-column:span 6}}
+@media (max-width:1180px){.ch{flex-wrap:wrap}.ch .rt{flex-wrap:wrap;margin-left:0;flex:1 1 100%}.tab{padding:6px 10px}}
+@media (max-width:900px){
+ :root{--side:0px}
+ .side{position:static;width:auto;flex-direction:row;overflow-x:auto;padding:10px;gap:6px;box-shadow:none}.brand{border:0;margin:0;padding:0 8px 0 0}.sp,.qs,.vtag,.xb{display:none}.nv{padding:10px 12px;font-size:14px}
+ .main{margin-left:0;padding:16px}.fbar.stuck{position:relative;left:auto;right:auto;top:auto}.fsel{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.two,.cmp2{grid-template-columns:1fr}.strip{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){.kpis{grid-template-columns:1fr}.greet{font-size:25px}}
+</style></head><body>
+<aside class="side" id="side">
+ <div class="brand"><div class="lg">🍜</div><div><b>SwiftBite</b><small>PERFORMANCE ANALYTICS</small></div></div>
+ <nav id="nav" style="display:flex;flex-direction:column;gap:6px"></nav>
+ <div class="sp"></div>
+ <div class="qs"><h5>Ringkasan cepat</h5><div>Total Pesanan<b id="q1">-</b></div><div>Keterlambatan<b id="q2" style="color:#D64545">-</b></div><div>Review Coverage<b id="q3" style="color:#1B9E6B">-</b></div></div>
+ <button class="xb" id="xb" aria-pressed="false">📖 Mode penjelasan</button>
+ <div class="vtag">Variant SB-P19</div>
+</aside>
+<main class="main">
+ <h1 class="ttl">SwiftBite Insight Hub</h1>
+ <p class="sub">Pesanan, Pengiriman, dan Kepuasan Pelanggan · Januari–Maret 2026</p>
+ <div class="greet" id="greet">Halo, Ghina! 👋</div>
+ <p class="greet2">Ini ringkasan performa SwiftBite, Januari–Maret 2026 (Variant SB-P19).</p>
+ <div id="fph"><div class="fbar" id="fbar">
+  <div class="fhead">
+   <div class="ft"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg><div><b>Filter data</b><small>Pilih bulan, zona, atau sentimen untuk mengubah semua angka</small></div></div>
+   <div class="fchips" id="chips"></div>
+   <div class="fcount" id="fcount">Menampilkan <b>0</b> dari 0 pesanan</div>
+   <button class="fb" id="fopen" aria-expanded="false">Ubah filter ▾</button>
+   <button class="fb" id="reset">Reset</button>
+  </div>
+  <div class="fsel" id="fsel">
+   <label>📅 Bulan<select id="fMonth"></select></label>
+   <label>📍 Zona<select id="fZone"></select></label>
+   <label>💬 Sentimen<select id="fSent"></select></label>
+  </div>
+ </div></div>
+
+ <section class="kpis" id="kpis" data-v="overview">
+  <div class="fc" data-f="1"><div class="flip">
+   <div class="face front card kpi"><button class="inf" data-flip aria-label="Penjelasan Total Orders" aria-pressed="false">i</button><div class="kh"><span class="ico">📦</span><span class="kl">Total Orders</span></div><div class="kr"><div><div class="kv" id="k1">-</div><div class="ks" id="k1s"></div></div><div id="s1"></div></div></div>
+   <div class="face back card kpi"><button class="inf" data-flip aria-label="Kembali" aria-pressed="true">↩</button><div class="kh"><span class="ico">📦</span><span class="kl">Total Orders</span></div><p class="kb">Jumlah pesanan unik pada periode dan filter yang dipilih.</p><p class="kf" id="kf1"></p></div>
+  </div></div>
+  <div class="fc" data-f="1"><div class="flip">
+   <div class="face front card kpi"><button class="inf" data-flip aria-label="Penjelasan Net Payment" aria-pressed="false">i</button><div class="kh"><span class="ico">💳</span><span class="kl">Net Payment</span></div><div class="kr"><div><div class="kv" id="k2">-</div><div class="ks" id="k2s"></div></div><div id="s2"></div></div></div>
+   <div class="face back card kpi"><button class="inf" data-flip aria-label="Kembali" aria-pressed="true">↩</button><div class="kh"><span class="ico">💳</span><span class="kl">Net Payment</span></div><p class="kb">Uang yang benar-benar diterima: pembayaran sukses dikurangi refund.</p><p class="kf" id="kf2"></p></div>
+  </div></div>
+  <div class="fc" data-f="1"><div class="flip">
+   <div class="face front card kpi"><button class="inf" data-flip aria-label="Penjelasan Review Coverage" aria-pressed="false">i</button><div class="kh"><span class="ico">📝</span><span class="kl">Review Coverage</span></div><div class="kr"><div><div class="kv" id="k3">-</div><div class="ks" id="k3s"></div></div><div id="s3"></div></div></div>
+   <div class="face back card kpi"><button class="inf" data-flip aria-label="Kembali" aria-pressed="true">↩</button><div class="kh"><span class="ico">📝</span><span class="kl">Review Coverage</span></div><p class="kb">Berapa persen pesanan yang diberi ulasan. Pesanan tanpa ulasan tetap dihitung.</p><p class="kf" id="kf3"></p></div>
+  </div></div>
+  <div class="fc" data-f="1"><div class="flip">
+   <div class="face front card kpi"><button class="inf" data-flip aria-label="Penjelasan Late Delivery Rate" aria-pressed="false">i</button><div class="kh"><span class="ico">⏱️</span><span class="kl">Late Delivery Rate</span></div><div class="kr"><div><div class="kv" id="k4">-</div><div class="ks" id="k4s"></div></div><div id="s4"></div></div></div>
+   <div class="face back card kpi"><button class="inf" data-flip aria-label="Kembali" aria-pressed="true">↩</button><div class="kh"><span class="ico">⏱️</span><span class="kl">Late Delivery Rate</span></div><p class="kb">Persentase pesanan terkirim yang terlambat. Makin kecil makin baik.</p><p class="kf" id="kf4"></p></div>
+  </div></div>
+  <div class="fc" data-f="1"><div class="flip">
+   <div class="face front card kpi"><button class="inf" data-flip aria-label="Penjelasan Rata-rata Rating" aria-pressed="false">i</button><div class="kh"><span class="ico">⭐</span><span class="kl">Rata-rata Rating</span></div><div class="kr"><div><div class="kv" id="k5">-</div><div class="ks" id="k5s"></div></div><div id="s5"></div></div></div>
+   <div class="face back card kpi"><button class="inf" data-flip aria-label="Kembali" aria-pressed="true">↩</button><div class="kh"><span class="ico">⭐</span><span class="kl">Rata-rata Rating</span></div><p class="kb">Rata-rata bintang dari pesanan yang diulas saja.</p><p class="kf" id="kf5"></p></div>
+  </div></div>
+ </section>
+
+ <section class="cards" id="cards">
+  <div class="fc w4" id="card1" data-v="bq1" data-f="1"><div class="flip">
+   <div class="face front card">
+    <div class="ch"><span class="badge">BQ-01</span><h3>Tren Bulanan</h3><div class="rt"><div class="tabs" role="tablist"><button class="tab" role="tab" data-tab="main" aria-selected="true">Net Payment &amp; Orders</button><button class="tab" role="tab" data-tab="canc" aria-selected="false">Cancel rate</button></div><button class="ins" data-flip aria-pressed="false">💡 Insight</button></div></div>
+    <p class="hl" id="hl1"></p><div class="cb" id="b1"></div>
+   </div>
+   <div class="face back card">
+    <div class="ch"><span class="badge">BQ-01</span><h3>Tren Bulanan</h3><div class="rt"><button class="ins" data-flip aria-pressed="true">↩ Kembali</button></div></div>
+    <div class="bk ar"><h4>Arti grafik</h4><p>Naik-turun Net Payment dan jumlah pesanan tiap bulan.</p></div>
+    <div class="bk tm"><h4>🔎 Temuan utama</h4><p id="t1"></p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p id="m1"></p></div>
+   </div>
+  </div></div>
+  <div class="fc" id="card3" data-v="bq3" data-f="1"><div class="flip">
+   <div class="face front card">
+    <div class="ch"><span class="badge">BQ-03</span><h3>Sentimen Review</h3><div class="rt"><button class="ins" data-flip aria-pressed="false">💡 Insight</button></div></div>
+    <p class="hl" id="hl3"></p><div class="cb" id="b3"></div>
+   </div>
+   <div class="face back card">
+    <div class="ch"><span class="badge">BQ-03</span><h3>Sentimen Review</h3><div class="rt"><button class="ins" data-flip aria-pressed="true">↩ Kembali</button></div></div>
+    <div class="bk ar"><h4>Arti grafik</h4><p>Komposisi isi ulasan: positif, netral, atau negatif. Dinilai dari teks, bukan dari bintang.</p></div>
+    <div class="bk tm"><h4>🔎 Temuan utama</h4><p id="t3"></p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p id="m3"></p></div>
+   </div>
+  </div></div>
+  <div class="fc w6" id="card4" data-v="bq4" data-f="1"><div class="flip">
+   <div class="face front card">
+    <div class="ch"><span class="badge">BQ-04</span><h3>Keterlambatan &amp; Rating Kepuasan</h3><div class="rt"><button class="ins" data-flip aria-pressed="false">💡 Insight</button></div></div>
+    <p class="hl" id="hl4"></p><div class="cb" id="b4"></div>
+   </div>
+   <div class="face back card">
+    <div class="ch"><span class="badge">BQ-04</span><h3>Keterlambatan &amp; Rating Kepuasan</h3><div class="rt"><button class="ins" data-flip aria-pressed="true">↩ Kembali</button></div></div>
+    <div class="bk ar"><h4>Arti grafik</h4><p>Membandingkan bintang pesanan terlambat dengan yang tepat waktu. Ini hubungan, bukan sebab.</p></div>
+    <div class="bk tm"><h4>🔎 Temuan utama</h4><p id="t4"></p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p id="m4"></p></div>
+   </div>
+  </div></div>
+  <div class="fc" id="card2" data-v="bq2" data-f="1"><div class="flip">
+   <div class="face front card">
+    <div class="ch"><span class="badge">BQ-02</span><h3>Late Rate per Zona</h3><div class="rt"><button class="ins" data-flip aria-pressed="false">💡 Insight</button></div></div>
+    <p class="hl" id="hl2"></p><div class="cb" id="b2"></div>
+   </div>
+   <div class="face back card">
+    <div class="ch"><span class="badge">BQ-02</span><h3>Late Rate per Zona</h3><div class="rt"><button class="ins" data-flip aria-pressed="true">↩ Kembali</button></div></div>
+    <div class="bk ar"><h4>Arti grafik</h4><p>Zona dengan pengiriman terlambat paling banyak ada di paling atas.</p></div>
+    <div class="bk tm"><h4>🔎 Temuan utama</h4><p id="t2"></p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p id="m2"></p></div>
+   </div>
+  </div></div>
+  <div class="fc" id="card5" data-v="bq5" data-f="1"><div class="flip">
+   <div class="face front card">
+    <div class="ch"><span class="badge">BQ-05</span><h3>Status Pesanan</h3><div class="rt"><button class="ins" data-flip aria-pressed="false">💡 Insight</button></div></div>
+    <p class="hl" id="hl5"></p><div class="cb" id="b5"></div>
+   </div>
+   <div class="face back card">
+    <div class="ch"><span class="badge">BQ-05</span><h3>Status Pesanan</h3><div class="rt"><button class="ins" data-flip aria-pressed="true">↩ Kembali</button></div></div>
+    <div class="bk ar"><h4>Arti grafik</h4><p>Berapa pesanan selesai, gagal bayar, dan dikembalikan.</p></div>
+    <div class="bk tm"><h4>🔎 Temuan utama</h4><p id="t5"></p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p id="m5"></p></div>
+   </div>
+  </div></div>
+  <div class="card" id="card6" data-v="overview"><div class="ch"><h3>Ringkasan Temuan</h3></div><div class="cb" id="b6" style="justify-content:flex-start;gap:0"></div></div>
+ </section>
+
+ <section class="iv" id="iv" hidden></section>
+</main>
+<script>
+const DATA = [{"m":"2026-03","r":"SwiftBite Partner 19","z":"South","np":134000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"West","np":108000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"West","np":69000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"Central","np":105000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 16","z":"North","np":113000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"South","np":232000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"Central","np":99000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 08","z":"West","np":58000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"North","np":156000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 18","z":"South","np":191000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 23","z":"West","np":76000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 05","z":"North","np":73000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 10","z":"Central","np":217000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 15","z":"East","np":70000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 20","z":"South","np":155000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"East","np":119000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"Central","np":116000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"West","np":120000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 17","z":"North","np":93000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"Central","np":92000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 04","z":"East","np":168000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 09","z":"Central","np":65000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 14","z":"North","np":32000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 19","z":"West","np":135000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 01","z":"South","np":162000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 06","z":"Central","np":190000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"North","np":94000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 16","z":"South","np":185000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 21","z":"Central","np":92000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 03","z":"Central","np":43000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 08","z":"West","np":107000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 13","z":"South","np":55000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 18","z":"North","np":153000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":1.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 23","z":"East","np":104000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 05","z":"North","np":279000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 10","z":"West","np":48000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"East","np":160000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 20","z":"West","np":154000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"East","np":149000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 07","z":"West","np":117000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"South","np":126000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 17","z":"South","np":97000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 22","z":"West","np":79000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 04","z":"West","np":165000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 09","z":"Central","np":220000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 14","z":"North","np":134000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 19","z":"West","np":160000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 01","z":"West","np":43000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":1.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"East","np":87000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 11","z":"East","np":217000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 16","z":"East","np":216000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 21","z":"North","np":74000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 03","z":"North","np":151000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":1.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 08","z":"West","np":178000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"East","np":56000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 18","z":"Central","np":67000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"West","np":190000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 05","z":"Central","np":172000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 10","z":"Central","np":91000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 15","z":"West","np":153000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 20","z":"North","np":150000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 02","z":"South","np":91000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"East","np":58000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"West","np":196000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"North","np":46000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 22","z":"Central","np":55000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 04","z":"East","np":152000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 09","z":"West","np":308000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 14","z":"West","np":104000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 19","z":"West","np":75000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"Central","np":102000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 06","z":"North","np":104000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"North","np":179000,"hr":1,"dv":1,"lt":1,"s":"No Text","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 16","z":"West","np":89000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"East","np":227000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 03","z":"East","np":81000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 08","z":"Central","np":162000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 13","z":"North","np":162000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 18","z":"South","np":76000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"North","np":243000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 05","z":"East","np":101000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 10","z":"North","np":117000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 15","z":"South","np":163000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 20","z":"Central","np":658000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 02","z":"East","np":70000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 07","z":"Central","np":115000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":1.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"East","np":175000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":1.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 17","z":"West","np":165000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"North","np":239000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 04","z":"South","np":58000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 09","z":"West","np":179000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 14","z":"Central","np":104000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 19","z":"North","np":190000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"West","np":211000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"North","np":26000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 11","z":"East","np":95000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"West","np":146000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"North","np":305000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"North","np":125000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 08","z":"West","np":126000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 13","z":"North","np":57000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 18","z":"North","np":145000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"South","np":170000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 05","z":"West","np":62000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 10","z":"West","np":98000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 15","z":"West","np":81000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 20","z":"East","np":176000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"Central","np":164000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"West","np":184000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"East","np":194000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 17","z":"East","np":106000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"South","np":76000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 04","z":"Central","np":102000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 09","z":"South","np":142000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 14","z":"East","np":118000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":1.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 19","z":"West","np":121000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"South","np":113000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"South","np":126000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"East","np":74000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"East","np":91000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 21","z":"North","np":91000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 03","z":"West","np":207000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 08","z":"South","np":75000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 13","z":"North","np":79000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 18","z":"West","np":140000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 23","z":"North","np":118000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 05","z":"South","np":110000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 10","z":"South","np":142000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"East","np":95000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 20","z":"North","np":116000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 02","z":"South","np":77000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 07","z":"Central","np":137000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"Central","np":197000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"East","np":120000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"Central","np":57000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 04","z":"East","np":162000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 09","z":"Central","np":229000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 14","z":"North","np":129000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 19","z":"East","np":141000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 01","z":"South","np":38000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"East","np":49000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"South","np":55000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 16","z":"Central","np":200000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 21","z":"East","np":80000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 03","z":"East","np":195000,"hr":1,"dv":1,"lt":1,"s":"No Text","rt":2.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 08","z":"East","np":142000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 13","z":"North","np":204000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 18","z":"South","np":190000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 23","z":"North","np":85000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 05","z":"West","np":220000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 10","z":"West","np":193000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"West","np":98000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 20","z":"North","np":179000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 02","z":"South","np":99000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"East","np":98000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"South","np":132000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"North","np":108000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 22","z":"West","np":193000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 04","z":"Central","np":86000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 09","z":"Central","np":43000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 14","z":"North","np":163000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 19","z":"East","np":137000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"North","np":157000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 06","z":"East","np":244000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"East","np":117000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"East","np":184000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"South","np":129000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"West","np":164000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 08","z":"West","np":65000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"Central","np":76000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 18","z":"North","np":115000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"South","np":101000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 05","z":"Central","np":130000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 10","z":"West","np":98000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"North","np":170000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 20","z":"South","np":86000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 02","z":"West","np":40000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"North","np":74000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"Central","np":75000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 17","z":"East","np":94000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 22","z":"South","np":121000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 04","z":"East","np":165000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 09","z":"Central","np":113000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 14","z":"West","np":64000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 19","z":"North","np":127000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 01","z":"Central","np":71000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"East","np":171000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"Central","np":82000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"North","np":150000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 21","z":"West","np":123000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 03","z":"South","np":107000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 08","z":"Central","np":167000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"North","np":147000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 18","z":"South","np":48000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"Central","np":60000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 05","z":"Central","np":72000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 10","z":"West","np":110000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"South","np":115000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 20","z":"North","np":174000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 02","z":"East","np":84000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 07","z":"North","np":79000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"West","np":136000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"East","np":175000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"West","np":109000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 04","z":"East","np":101000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 09","z":"West","np":88000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 14","z":"South","np":83000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 19","z":"South","np":62000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"West","np":32000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 06","z":"West","np":90000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"Central","np":71000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"North","np":159000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"West","np":57000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 03","z":"West","np":161000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 08","z":"East","np":61000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"East","np":136000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 18","z":"East","np":138000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"North","np":215000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 05","z":"North","np":85000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 10","z":"West","np":158000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"East","np":109000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 20","z":"Central","np":71000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"West","np":145000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 07","z":"Central","np":110000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"Central","np":9000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 17","z":"West","np":25000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 22","z":"North","np":108000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 04","z":"South","np":130000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 09","z":"East","np":169000,"hr":1,"dv":1,"lt":0,"s":"No Text","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 14","z":"West","np":45000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 19","z":"North","np":93000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 01","z":"Central","np":148000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 06","z":"East","np":229000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 11","z":"West","np":95000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 16","z":"West","np":82000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 21","z":"West","np":93000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"Central","np":144000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":1.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 08","z":"North","np":183000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 13","z":"North","np":79000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 18","z":"West","np":118000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 23","z":"East","np":96000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 05","z":"East","np":218000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 10","z":"Central","np":115000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 15","z":"North","np":232000,"hr":1,"dv":1,"lt":1,"s":"No Text","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 20","z":"South","np":79000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"North","np":147000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 07","z":"East","np":141000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"North","np":90000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 17","z":"South","np":97000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 22","z":"Central","np":76000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 04","z":"East","np":65000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 09","z":"Central","np":76000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 14","z":"East","np":156000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 19","z":"West","np":94000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"North","np":110000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 06","z":"South","np":112000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 11","z":"West","np":95000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 16","z":"Central","np":154000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 21","z":"North","np":74000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"West","np":140000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 08","z":"North","np":236000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 13","z":"East","np":89000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 18","z":"West","np":124000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 23","z":"North","np":150000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 05","z":"North","np":119000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 10","z":"West","np":186000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 15","z":"North","np":268000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 20","z":"North","np":140000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 02","z":"South","np":72000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"West","np":163000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 12","z":"West","np":54000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"West","np":92000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 22","z":"East","np":140000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 04","z":"Central","np":93000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 09","z":"West","np":229000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":3.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 14","z":"East","np":97000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 19","z":"East","np":115000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 01","z":"South","np":248000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 06","z":"Central","np":76000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 11","z":"South","np":91000,"hr":1,"dv":1,"lt":1,"s":"Negative","rt":3.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 16","z":"East","np":122000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 21","z":"West","np":118000,"hr":1,"dv":1,"lt":0,"s":"Negative","rt":5.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 03","z":"South","np":91000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 08","z":"South","np":124000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 13","z":"East","np":144000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 18","z":"East","np":204000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":5.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 23","z":"North","np":114000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 05","z":"West","np":118000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-01","r":"SwiftBite Partner 10","z":"South","np":163000,"hr":1,"dv":1,"lt":1,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 15","z":"North","np":89000,"hr":0,"dv":1,"lt":1,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 20","z":"West","np":101000,"hr":1,"dv":1,"lt":0,"s":"Positive","rt":4.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 02","z":"North","np":114000,"hr":1,"dv":1,"lt":0,"s":"Neutral","rt":4.0,"cs":null},{"m":"2026-02","r":"SwiftBite Partner 07","z":"South","np":202000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 12","z":"South","np":25000,"hr":0,"dv":1,"lt":0,"s":"No Review","rt":null,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 17","z":"East","np":111000,"hr":1,"dv":1,"lt":1,"s":"Neutral","rt":2.0,"cs":null},{"m":"2026-03","r":"SwiftBite Partner 22","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 04","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 09","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 14","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 19","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 01","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 06","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 11","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 16","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 21","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 03","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 08","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 13","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 18","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 23","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 05","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 10","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 15","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 20","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 02","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 07","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 12","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 17","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 22","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-01","r":"SwiftBite Partner 04","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 09","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-02","r":"SwiftBite Partner 14","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"failed"},{"m":"2026-03","r":"SwiftBite Partner 19","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-03","r":"SwiftBite Partner 01","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-02","r":"SwiftBite Partner 06","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-02","r":"SwiftBite Partner 11","z":"Central","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-02","r":"SwiftBite Partner 16","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-01","r":"SwiftBite Partner 21","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-01","r":"SwiftBite Partner 03","z":"North","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-02","r":"SwiftBite Partner 08","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-03","r":"SwiftBite Partner 13","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-02","r":"SwiftBite Partner 18","z":"East","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-01","r":"SwiftBite Partner 23","z":"South","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-01","r":"SwiftBite Partner 05","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"},{"m":"2026-03","r":"SwiftBite Partner 10","z":"West","np":0,"hr":0,"dv":0,"lt":0,"s":"No Review","rt":null,"cs":"refunded"}];
+const $ = id => document.getElementById(id);
+const MN = {"01":"Jan","02":"Feb","03":"Mar","04":"Apr","05":"Mei","06":"Jun","07":"Jul","08":"Agu","09":"Sep","10":"Okt","11":"Nov","12":"Des"};
+const MF = {"01":"Januari","02":"Februari","03":"Maret","04":"April","05":"Mei","06":"Juni","07":"Juli","08":"Agustus","09":"September","10":"Oktober","11":"November","12":"Desember"};
+const mAb = k => MN[k.slice(5,7)] || k;
+const mSh = k => mAb(k) + " " + k.slice(0,4);
+const mFu = k => (MF[k.slice(5,7)] || k) + " " + k.slice(0,4);
+function rnd(v,d){const m=Math.pow(10,d),x=v*m,f=Math.floor(x),df=x-f;let r;if(Math.abs(df-0.5)<1e-9)r=(f%2===0)?f:f+1;else r=Math.round(x);return (r/m).toFixed(d);}
+const dec = (v,d) => rnd(v,d).replace(".",",");
+const pc = (n,d,k) => d===0 ? "N/A" : dec(100*n/d,k==null?1:k)+"%";
+const fi = n => n.toLocaleString("id-ID");
+const rp = n => "Rp" + fi(Math.round(n));
+const jt = v => "Rp" + dec(v/1e6,1) + " jt";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const COLS = {"Positive":"#1B9E6B","Neutral":"#F59F42","Negative":"#D64545","No Text":"#8C7B6B","Unknown":"#C9BFB6"};
+const SENT_ORDER = ["Positive","Neutral","Negative","Unknown","No Text","No Review"];
+const NAV = [["overview","📊","Overview"],["bq1","💳","Transaksi · BQ-01"],["bq2","🚚","Pengiriman · BQ-02"],["bq3","⭐","Review · BQ-03"],["bq4","⏱️","Rating · BQ-04"],["bq5","🛑","Pembatalan · BQ-05"],["insights","💡","Insights"]];
+let VIEW = "overview", TAB = "main", EXPLAIN = false, T = null, LAST = null;
+
+/* ---------- filter ---------- */
+const uniq = k => [...new Set(DATA.map(d => d[k]))].sort();
+function fill(id, opts, allLabel){
+  const el=$(id); el.innerHTML="";
+  [["ALL",allLabel]].concat(opts).forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;el.appendChild(o);});
+}
+fill("fMonth", uniq("m").map(m=>[m,mSh(m)]), "Semua bulan");
+fill("fZone",  uniq("z").map(z=>[z,z]), "Semua zona");
+fill("fSent",  SENT_ORDER.filter(s=>DATA.some(d=>d.s===s)).map(s=>[s,s==="No Review"?"No Review (belum ada review)":s]), "Semua sentimen");
+function sel(){return {m:($("fMonth")||{}).value||"ALL", z:($("fZone")||{}).value||"ALL", s:($("fSent")||{}).value||"ALL"};}
+function filtered(){const q=sel();return DATA.filter(d=>(q.m==="ALL"||d.m===q.m)&&(q.z==="ALL"||d.z===q.z)&&(q.s==="ALL"||d.s===q.s));}
+
+/* ---------- agregasi ---------- */
+function agg(f){
+  const A={orders:f.length,net:0,rev:0,dv:0,late:0,rated:[],months:{},zones:{},sent:{},failed:0,refunded:0};
+  f.forEach(d=>{
+    A.net+=d.np; A.rev+=d.hr; A.dv+=d.dv; if(d.dv) A.late+=d.lt;
+    if(d.rt!=null) A.rated.push(d);
+    const M=A.months[d.m]||(A.months[d.m]={n:0,np:0,rev:0,dv:0,late:0,rs:0,rn:0,failed:0,refunded:0});
+    M.n++; M.np+=d.np; M.rev+=d.hr; if(d.dv){M.dv++;M.late+=d.lt;} if(d.rt!=null){M.rs+=d.rt;M.rn++;}
+    if(d.cs==="failed"){M.failed++;A.failed++;} else if(d.cs==="refunded"){M.refunded++;A.refunded++;}
+    const Z=A.zones[d.z]||(A.zones[d.z]={n:0,dv:0,late:0}); Z.n++; if(d.dv){Z.dv++;Z.late+=d.lt;}
+    if(d.hr) A.sent[d.s]=(A.sent[d.s]||0)+1;
+  });
+  A.ml=Object.keys(A.months).sort();
+  A.avg=A.rated.length?A.rated.reduce((a,d)=>a+d.rt,0)/A.rated.length:null;
+  A.canc=A.failed+A.refunded; A.done=A.orders-A.canc;
+  return A;
+}
+const chg = (c,p) => (p>0 && c!=null) ? 100*(c/p-1) : null;
+const sgn = (v) => (v>=0?"+":"−") + dec(Math.abs(v),1) + "%";
+function dlt(v,inv){ if(v==null) return ""; const up=v>=0, good=inv?!up:up; return '<span class="dlt '+(good?"up":"dn")+'">'+(up?"↑ ":"↓ ")+sgn(v)+'</span>'; }
+function cp(v,inv){ if(v==null) return ""; const up=v>=0, good=inv?!up:up; return '<span class="cp '+(good?"up":"dn")+'">'+(up?"▲ ":"▼ ")+dec(Math.abs(v),1)+'%</span>'; }
+
+/* ---------- sumbu & grafik batang ---------- */
+function axis(max){
+  if(!(max>0)) return {step:1,max:4};
+  const base=[1,2,2.5,4,5,8];
+  for(let p=-2;p<=7;p++) for(const b of base){const s=b*Math.pow(10,p); if(4*s>=max-1e-9) return {step:s,max:4*s};}
+  return {step:max/4,max:max};
+}
+const tk = v => String(+v.toFixed(2)).replace(".",",");
+function frame(AX,suf,cols,xl){
+  let t="",g="";
+  for(let i=0;i<=4;i++){t+='<span style="bottom:'+(i*25)+'%">'+tk(i*AX.step)+suf+'</span>';g+='<i style="bottom:'+(i*25)+'%"></i>';}
+  return '<div class="plot"><div class="tks">'+t+'</div><div class="grd">'+g+'</div><div class="cols">'+cols+'</div></div><div class="xl">'+xl+'</div>';
+}
+function barChart(vals,lab,xlab,bg,suf,chips,titles,AX){
+  AX=AX||axis(Math.max(...vals,0));
+  const cols=vals.map((v,i)=>'<div class="col" title="'+esc(titles[i])+'">'+(chips[i]||"")+'<span class="vl">'+lab[i]+'</span><div class="bar" style="--p:'+(v/AX.max)+';background:'+bg+'"></div></div>').join("");
+  return frame(AX,suf,cols,xlab.map(x=>"<span>"+x+"</span>").join(""));
+}
+function stackChart(a,b,xlab,titles){
+  const tot=a.map((v,i)=>v+b[i]); const AX=axis(Math.max(...tot,0));
+  const cols=tot.map((t,i)=>{
+    const seg=(v,c)=> v>0?'<span style="flex:'+v+';background:'+c+'">'+(v/AX.max*172>=16?v:"")+'</span>':"";
+    return '<div class="col" title="'+esc(titles[i])+'"><span class="vl">'+t+'</span><div class="stk" style="--p:'+(t/AX.max)+'">'+seg(b[i],"#8A5A3C")+seg(a[i],"#D64545")+'</div></div>';
+  }).join("");
+  return frame(AX,"",cols,xlab.map(x=>"<span>"+x+"</span>").join(""));
+}
+function spark(vals,color){
+  const v=vals.filter(x=>x!=null); if(v.length<2) return "";
+  const W=92,H=30,mn=Math.min(...v),mx=Math.max(...v),rg=mx-mn||1;
+  const pts=vals.map((x,i)=>x==null?null:[4+i*(W-8)/(vals.length-1), mx===mn?H/2:H-4-(x-mn)/rg*(H-8)]).filter(Boolean);
+  const last=pts[pts.length-1];
+  return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" aria-hidden="true"><polyline points="'+pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="'+last[0].toFixed(1)+'" cy="'+last[1].toFixed(1)+'" r="3.5" fill="#fff" stroke="'+color+'" stroke-width="2"/></svg>';
+}
+const nodata = m => '<div class="empty">'+(m||"Tidak ada data pada filter ini")+'</div>';
+const median = a => {const s=[...a].sort((x,y)=>x-y),n=s.length;return n?(n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2):null;};
+
+/* ---------- KPI ---------- */
+function renderKPI(A){
+  const ml=A.ml, last=ml[ml.length-1], prev=ml[ml.length-2];
+  $("k1").textContent=fi(A.orders);
+  $("k2").textContent=A.orders?rp(A.net):"N/A";
+  $("k3").textContent=pc(A.rev,A.orders);
+  $("k4").textContent=pc(A.late,A.dv);
+  $("k5").textContent=A.avg==null?"N/A":dec(A.avg,2);
+  const dN=ml.length>1?chg(A.months[last].n,A.months[prev].n):null, dP=ml.length>1?chg(A.months[last].np,A.months[prev].np):null;
+  $("k1s").innerHTML=dN==null?"":dlt(dN)+" vs "+mAb(prev);
+  $("k2s").innerHTML=dP==null?"":dlt(dP)+" vs "+mAb(prev);
+  $("k3s").textContent=A.orders?(A.rev+" / "+A.orders+" order"):"belum ada data";
+  $("k4s").textContent=A.dv?(A.late+" / "+A.dv+" valid"):"belum ada pesanan terkirim valid";
+  $("k5s").textContent="n = "+A.rated.length+" review";
+  $("s1").innerHTML=spark(ml.map(k=>A.months[k].n),"#E8590C");
+  $("s2").innerHTML=spark(ml.map(k=>A.months[k].np),"#F59F42");
+  $("s3").innerHTML=spark(ml.map(k=>A.months[k].n?100*A.months[k].rev/A.months[k].n:null),"#1B9E6B");
+  $("s4").innerHTML=spark(ml.map(k=>A.months[k].dv?100*A.months[k].late/A.months[k].dv:null),"#D64545");
+  $("s5").innerHTML=spark(ml.map(k=>A.months[k].rn?A.months[k].rs/A.months[k].rn:null),"#F59F42");
+  $("kf1").textContent=A.orders?("= "+fi(A.orders)+" pesanan"):"Belum ada data pada filter ini";
+  $("kf2").textContent=A.orders?("= "+rp(A.net)):"Belum ada data pada filter ini";
+  $("kf3").textContent=A.orders?(A.rev+" dari "+A.orders+" pesanan punya review"):"Belum ada data pada filter ini";
+  $("kf4").textContent=A.dv?(A.late+" dari "+A.dv+" pesanan terkirim"):"Belum ada data pada filter ini";
+  $("kf5").textContent=A.avg==null?"Belum ada data pada filter ini":("dari "+A.rated.length+" review berating");
+  $("q1").textContent=fi(A.orders); $("q2").textContent=pc(A.late,A.dv); $("q3").textContent=pc(A.rev,A.orders);
+}
+
+/* ---------- kartu BQ ---------- */
+function renderTren(A){
+  const ml=A.ml, el=$("b1"); if(!ml.length){el.innerHTML=nodata();return;}
+  const lab=ml.map(mAb), xl=ml.map(mSh), M=k=>A.months[k];
+  const cr=k=>100*(M(k).failed+M(k).refunded)/M(k).n;
+  const ch=(fn,inv)=>ml.map((k,i)=>i?cp(chg(fn(k),fn(ml[i-1])),inv):"");
+  let html;
+  if(TAB==="main"){
+    const np=ml.map(k=>M(k).np/1e6), n=ml.map(k=>M(k).n);
+    html='<div class="two"><div class="pn"><div class="pnh"><span>Net Payment (Rp juta)</span><span><b>'+jt(A.net)+'</b> <small>total periode</small></span></div>'+
+      barChart(np,np.map(v=>"Rp"+dec(v,1)+" jt"),xl,"linear-gradient(#F59F42,#E8590C)","",ch(k=>M(k).np),ml.map((k,i)=>mFu(k)+": "+jt(M(k).np)),axis(Math.max(...np,0)))+'</div>'+
+      '<div class="pn"><div class="pnh"><span>Jumlah pesanan</span><span><b>'+fi(A.orders)+'</b> <small>total pesanan</small></span></div>'+
+      barChart(n,n.map(String),xl,"linear-gradient(#8A5A3C,#2B1A10)","",ch(k=>M(k).n),ml.map(k=>mFu(k)+": "+M(k).n+" pesanan"))+'</div></div>';
+  } else {
+    const crs=ml.map(cr), f=ml.map(k=>M(k).failed), r=ml.map(k=>M(k).refunded);
+    html='<div class="two"><div class="pn"><div class="pnh"><span>Cancel rate (% pesanan)</span><span><b>'+pc(A.canc,A.orders)+'</b> <small>total periode</small></span></div>'+
+      barChart(crs,crs.map(v=>dec(v,1)+"%"),xl,"linear-gradient(#F59F42,#C2410C)","%",ch(cr,true),ml.map((k,i)=>mFu(k)+": "+dec(crs[i],1)+"%"))+'</div>'+
+      '<div class="pn"><div class="pnh"><span>Pesanan batal (jumlah)</span><span><b>'+A.canc+'</b> <small>total batal</small></span></div>'+
+      stackChart(f,r,xl,ml.map((k,i)=>mFu(k)+": "+f[i]+" failed, "+r[i]+" refunded"))+
+      '<div class="lgd"><span><i style="background:#D64545"></i>Failed</span><span><i style="background:#8A5A3C"></i>Refunded</span></div></div></div>';
+  }
+  const mx=(fn)=>ml.reduce((b,k)=>fn(k)>fn(b)?k:b,ml[0]);
+  const bn=mx(k=>M(k).np), bo=mx(k=>M(k).n), bc=mx(k=>cr(k));
+  html+='<div class="strip"><div>Net Payment tertinggi<b>'+mAb(bn)+" · "+jt(M(bn).np)+'</b></div><div>Pesanan tertinggi<b>'+mAb(bo)+" · "+M(bo).n+' pesanan</b></div><div>Batal tertinggi<b>'+mAb(bc)+" · "+dec(cr(bc),1)+'%</b></div><div>Total periode<b>'+rp(A.net)+" · "+fi(A.orders)+'</b></div></div>';
+  el.innerHTML=html;
+}
+function renderSent(A){
+  const R=A.rev, labs=["Positive","Neutral","Negative","No Text","Unknown"]; let off=25, segs="";
+  labs.forEach(l=>{const c=A.sent[l]||0,p=R?100*c/R:0; if(p>0){segs+='<circle r="15.9155" cx="21" cy="21" fill="none" stroke="'+COLS[l]+'" stroke-width="5.2" stroke-dasharray="'+p.toFixed(3)+' '+(100-p).toFixed(3)+'" stroke-dashoffset="'+off.toFixed(3)+'"/>';} off-=p;});
+  const lg=labs.map(l=>'<li><i style="background:'+COLS[l]+'"></i><span>'+l+'</span><span class="n">'+(A.sent[l]||0)+'</span><em>('+pc(A.sent[l]||0,R)+')</em></li>').join("");
+  $("b3").innerHTML='<div class="dn-wrap"><div class="donut"><svg viewBox="0 0 42 42" role="img" aria-label="Komposisi sentimen"><circle r="15.9155" cx="21" cy="21" fill="none" stroke="#F1DCC6" stroke-width="5.2"/>'+segs+'</svg><div class="mid">'+(R?'<b>'+R+'</b><span>REVIEW</span>':'<span>TIDAK ADA<br>DATA</span>')+'</div></div><ul class="sl">'+lg+'</ul></div>'+
+    '<div class="cov">Review Coverage <b>'+pc(A.rev,A.orders)+'</b> · '+A.rev+' dari '+A.orders+' pesanan<div class="trk"><div style="width:'+(A.orders?100*A.rev/A.orders:0).toFixed(1)+'%"></div></div></div>';
+}
+function zoneList(A){
+  return Object.entries(A.zones).map(([z,v])=>({z,dv:v.dv,late:v.late,rate:v.dv?100*v.late/v.dv:null})).sort((a,b)=>((b.rate==null?-1:b.rate)-(a.rate==null?-1:a.rate))||a.z.localeCompare(b.z));
+}
+function renderZone(A){
+  const zs=zoneList(A); if(!zs.length){$("b2").innerHTML=nodata();return;}
+  $("b2").innerHTML='<div>'+zs.map((z,i)=>'<div class="zr'+(i===0&&z.rate!=null?" top":"")+'"><span class="rk">'+(i+1)+'</span><b>'+esc(z.z)+'</b><span class="zv">'+(z.rate==null?"N/A":dec(z.rate,1)+"%")+' <small>('+z.late+'/'+z.dv+')</small></span><div class="trk"><div style="width:'+(z.rate==null?0:z.rate)+'%"></div></div></div>').join("")+'</div><p class="note">Penyebut = pesanan terkirim valid di zona itu.</p>';
+}
+function renderRating(A){
+  const g0=A.rated.filter(d=>d.dv&&!d.lt), g1=A.rated.filter(d=>d.dv&&d.lt);
+  const av=a=>a.length?a.reduce((x,d)=>x+d.rt,0)/a.length:null;
+  const neg=a=>a.filter(d=>d.s==="Negative").length;
+  const card=(cls,tag,a)=>{const m=av(a);return '<div class="cmp '+cls+'"><span class="tg">'+tag+'</span><div class="big">'+(m==null?"N/A":dec(m,2))+'<small>Rata-rata rating</small></div><div class="rw"><span>Median rating</span><b>'+(a.length?dec(median(a.map(d=>d.rt)),1):"N/A")+'</b></div><div class="rw"><span>Jumlah ulasan</span><b>n = '+a.length+'</b></div><div class="rw"><span>Ulasan Negative</span><b>'+pc(neg(a),a.length)+(a.length?" ("+neg(a)+"/"+a.length+")":"")+'</b></div><div class="trk"><div style="width:'+(a.length?100*neg(a)/a.length:0).toFixed(1)+'%"></div></div></div>';};
+  const row=(t,a,c)=>{const m=av(a);return '<div class="hr"><span>'+t+'</span><div class="t">'+(m==null?'<span style="padding-left:10px;color:#7A5A44">N/A</span>':'<div style="width:'+(100*m/5).toFixed(1)+'%;background:'+c+'">'+dec(m,2)+'</div>')+'</div></div>';};
+  $("b4").innerHTML='<div class="cmp2">'+card("l","⏱ Pesanan Terlambat",g1)+card("o","✅ Pesanan Tepat Waktu",g0)+'</div>'+
+    '<div class="hb"><div style="font-size:12.5px;font-weight:700;color:var(--mut)">Perbandingan rata-rata rating (skala 0–5)</div>'+row("Terlambat",g1,"linear-gradient(90deg,#E57373,#D64545)")+row("Tepat waktu",g0,"linear-gradient(90deg,#4CC38A,#1B9E6B)")+'<div class="axs"><span></span><div><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>'+
+    '<p class="note">Hubungan ini berupa korelasi dan hanya mencakup pesanan yang direview.</p>';
+}
+function arc(cx,cy,r,t0,t1){
+  const p=t=>{const a=Math.PI*(1-t);return [cx+r*Math.cos(a),cy-r*Math.sin(a)];};
+  const a=p(t0),b=p(t1);return "M"+a[0].toFixed(2)+" "+a[1].toFixed(2)+" A"+r+" "+r+" 0 0 1 "+b[0].toFixed(2)+" "+b[1].toFixed(2);
+}
+function renderStatus(A){
+  const O=A.orders; if(!O){$("b5").innerHTML=nodata();return;}
+  let t=0,segs="";
+  [[A.done,"#1B9E6B"],[A.failed,"#D64545"],[A.refunded,"#F59F42"]].forEach(([v,c])=>{const w=v/O; if(w>0){segs+='<path d="'+arc(110,110,86,t,t+w)+'" fill="none" stroke="'+c+'" stroke-width="22"/>';} t+=w;});
+  $("b5").innerHTML='<div class="gg"><svg viewBox="0 0 220 122" role="img" aria-label="Status pesanan"><path d="'+arc(110,110,86,0,1)+'" fill="none" stroke="#F1DCC6" stroke-width="22"/>'+segs+'</svg><div class="mid"><b>'+pc(A.done,O)+'</b><span>SELESAI</span></div></div>'+
+    '<div class="st3"><div style="border-color:#1B9E6B"><b>'+A.done+'</b>Selesai</div><div style="border-color:#D64545"><b>'+A.failed+'</b>Failed</div><div style="border-color:#F59F42"><b>'+A.refunded+'</b>Refunded</div></div>';
+}
+
+/* ---------- teks insight ---------- */
+function lalu(a){return a.length>1?a.slice(0,-1).join(", ")+", lalu "+a[a.length-1]:a.join("");}
+function buildTexts(A){
+  const q=sel(), none="Belum ada data pada filter ini.", chg2="Ubah filter untuk melihat temuan.";
+  const out={}, ml=A.ml, F=[];
+  const M=k=>A.months[k], cr=k=>100*(M(k).failed+M(k).refunded)/M(k).n;
+  // BQ1
+  if(!ml.length){out[1]={hl:"Belum ada data pada filter ini",t:none,m:chg2,f:none};}
+  else if(ml.length===1){const k=ml[0];out[1]={hl:"Hanya satu bulan tampil: "+mFu(k)+".",t:"Hanya satu bulan tampil ("+mFu(k)+"): "+M(k).n+" pesanan, Net Payment "+jt(M(k).np)+", pembatalan "+dec(cr(k),1)+"%.",m:"Pilih Semua bulan untuk membandingkan tren antar bulan.",f:"Net Payment "+jt(M(k).np)+" pada "+mFu(k)+"."};}
+  else{
+    const k0=ml[0],k1=ml[ml.length-1],dir=(a,b)=>b>a?"naik":b<a?"turun":"tetap";
+    const dP=dir(M(k0).np,M(k1).np),dN=dir(M(k0).n,M(k1).n),dC=dir(cr(k0),cr(k1)), cUp=cr(k1)>cr(k0)+1e-9, pUp=M(k1).np>M(k0).np;
+    const t="Net Payment "+dP+" dari "+jt(M(k0).np)+" ("+mAb(k0)+") ke "+jt(M(k1).np)+" ("+mAb(k1)+"), dan pesanan "+dN+" dari "+M(k0).n+" ke "+M(k1).n+". Pembatalan "+(dC===dP&&dC!=="tetap"?"juga ":"")+dC+", dari "+dec(cr(k0),1)+"% ke "+dec(cr(k1),1)+"%.";
+    const m=pUp&&cUp?"Pertumbuhan sedang baik, tetapi perlu dijaga agar pembatalan tidak ikut menggerus Net Payment.":pUp?"Net Payment tumbuh tanpa kenaikan pembatalan, kondisi sehat yang perlu dipertahankan.":cUp?"Net Payment tidak naik sementara pembatalan naik; perlu diperiksa lebih dulu.":"Net Payment tidak naik; perlu dilihat apakah jumlah pesanan ikut turun.";
+    out[1]={hl:"Net Payment "+dP+" ke "+jt(M(k1).np)+" di "+mFu(k1)+".",t,m,f:"Net Payment "+dP+" dari "+jt(M(k0).np)+" ("+mAb(k0)+") ke "+jt(M(k1).np)+" ("+mAb(k1)+")."};
+  }
+  // BQ2
+  const zs=zoneList(A).filter(z=>z.rate!=null);
+  if(!zs.length){out[2]={hl:"Belum ada data pada filter ini",t:none,m:chg2,f:none};}
+  else{
+    const top=zs[0],all=A.dv?100*A.late/A.dv:0,one=zs.length===1,diff=top.rate-all, few=top.dv<10?" Contoh pengiriman sedikit, baca dengan hati-hati.":"";
+    const dd=dec(diff,1).replace(/,0$/,"");
+    out[2]={hl:esc(top.z)+(one?": ":" tertinggi: ")+dec(top.rate,1)+"% pesanan terkirim terlambat.",
+      t:one?("Zona "+top.z+": "+dec(top.rate,1)+"% ("+top.late+"/"+top.dv+") pesanan terkirim terlambat."+few):(top.z+" tertinggi: "+dec(top.rate,1)+"% ("+top.late+"/"+top.dv+"), "+dd+" poin di atas rata-rata "+dec(all,1)+"%."+few),
+      m:one?"Pilih Semua zona untuk membandingkan antar zona.":("Pengiriman di zona "+top.z+" perlu ditinjau lebih dulu sebagai prioritas perbaikan operasional."),
+      f:one?("Zona "+top.z+": "+dec(top.rate,1)+"% ("+top.late+"/"+top.dv+")."):("Zona "+top.z+" paling sering terlambat: "+dec(top.rate,1)+"% ("+top.late+"/"+top.dv+").")};
+  }
+  // BQ3
+  const R=A.rev; const cov=pc(A.rev,A.orders);
+  if(!R){out[3]={hl:"Belum ada review pada filter ini",t:none,m:chg2,f:none};}
+  else{
+    const labs=["Positive","Neutral","Negative","No Text","Unknown"], dom=labs.reduce((b,l)=>(A.sent[l]||0)>(A.sent[b]||0)?l:b,"Positive");
+    const pp=l=>dec(100*(A.sent[l]||0)/R,1), negp=100*(A.sent[ "Negative"]||0)/R, few=R<10?" Contoh review sedikit, baca dengan hati-hati.":"";
+    if(q.s!=="ALL"){out[3]={hl:R+" review berlabel "+q.s+".",t:"Filter sentimen aktif: "+R+" review berlabel "+q.s+"."+few,m:"Hapus filter sentimen untuk melihat komposisi lengkap.",f:"Filter sentimen aktif: "+R+" review berlabel "+q.s+"."};}
+    else{
+      const cv=100*A.rev/A.orders, ph=cv<50?"kurang dari separuh":cv<=65?"sekitar separuh":"sebagian besar";
+      const neg=negp>0?("sekitar 1 dari "+Math.max(1,Math.round(100/negp))+" review bernada negatif perlu ditindaklanjuti"):"tidak ada review bernada negatif";
+      out[3]={hl:dom+" memimpin "+pp(dom)+"% dari "+R+" review.",
+        t:"Dari "+R+" review, Positive "+pp("Positive")+"%, Neutral "+pp("Neutral")+"%, Negative "+pp("Negative")+"%. Review Coverage "+(cv<60?"baru ":"")+cov+"."+few,
+        m:"Suara pelanggan "+(cv<60?"baru ":"")+"terdengar dari "+ph+" pesanan, dan "+neg+".",
+        f:"Review Coverage "+cov+"; sentimen "+dom+" dominan ("+pp(dom)+"%)."};
+    }
+  }
+  // BQ4
+  const g0=A.rated.filter(d=>d.dv&&!d.lt), g1=A.rated.filter(d=>d.dv&&d.lt);
+  if(!g0.length||!g1.length){out[4]={hl:"Perbandingan belum bisa dihitung",t:"Salah satu kelompok (terlambat atau tepat waktu) belum punya review pada filter ini, jadi perbandingan tidak bisa dihitung.",m:chg2,f:"Perbandingan rating belum bisa dihitung pada filter ini."};}
+  else{
+    const av=a=>a.reduce((x,d)=>x+d.rt,0)/a.length, a0=av(g0),a1=av(g1), np=a=>100*a.filter(d=>d.s==="Negative").length/a.length, few=(g0.length<10||g1.length<10)?" Contoh review sedikit, baca dengan hati-hati.":"";
+    const lower=a1<a0;
+    out[4]={hl:"Rating pesanan terlambat "+dec(a1,2)+" vs "+dec(a0,2)+" untuk tepat waktu.",
+      t:"Rating pesanan terlambat "+dec(a1,2)+" vs "+dec(a0,2)+" untuk tepat waktu; review Negative "+dec(np(g1),1)+"% vs "+dec(np(g0),1)+"%."+few,
+      m:(lower?"Pesanan terlambat berkaitan dengan penilaian lebih rendah; menekan keterlambatan berpotensi menjaga kepuasan. Ini korelasi, bukan bukti sebab-akibat.":"Pada filter ini rating pesanan terlambat tidak lebih rendah, sehingga hubungan keterlambatan dan rating tidak terlihat. Ini korelasi saja.")+few,
+      f:"Rating pesanan terlambat "+(lower?"lebih rendah":"tidak lebih rendah")+" ("+dec(a1,2)+" vs "+dec(a0,2)+"); ini korelasi."};
+  }
+  // BQ5
+  if(!A.orders){out[5]={hl:"Belum ada data pada filter ini",t:none,m:chg2,f:none};}
+  else{
+    const fm=ml.map(k=>M(k).failed); let spike=null;
+    if(ml.length>=2){const mxv=Math.max(...fm), ix=fm.indexOf(mxv), others=fm.filter((_,i)=>i!==ix), oa=others.reduce((a,b)=>a+b,0)/others.length; if(mxv>=1.5*oa && mxv>=3) spike=ml[ix];}
+    const second=ml.length>=2?(" Failed "+(spike?"melonjak di "+MF[spike.slice(5,7)]:"relatif stabil")+" ("+lalu(fm.map(String))+")."):"";
+    const dom=A.failed>=A.refunded?"failed":"refunded";
+    const m=A.canc===0?"Tidak ada pesanan batal pada filter ini.":(A.failed>A.refunded?((spike?"Lonjakan batal berasal":"Pembatalan didominasi")+" dari pembayaran gagal, bukan refund, jadi proses pembayaran perlu diperiksa lebih dulu."):A.refunded>A.failed?"Pembatalan lebih banyak berupa refund; perlu dilihat alasan pengembalian dana.":"Failed dan refund seimbang; keduanya perlu dipantau.");
+    out[5]={hl:pc(A.done,A.orders)+" pesanan selesai"+(A.canc?("; "+(dom==="failed"?"pembatalan failed mendominasi":"refund mendominasi pembatalan")+"."):"."),
+      t:"Dari "+A.orders+" pesanan, "+A.done+" selesai, "+A.failed+" failed, dan "+A.refunded+" refunded."+second,m,
+      f:"Dari "+A.canc+" pesanan batal, "+A.failed+" failed dan "+A.refunded+" refunded"+(spike?"; failed naik di "+MF[spike.slice(5,7)]:"")+"."};
+  }
+  return out;
+}
+function applyTexts(A){
+  T=buildTexts(A);
+  for(let i=1;i<=5;i++){ $("hl"+i).innerHTML=T[i].hl; $("t"+i).textContent=T[i].t; $("m"+i).textContent=T[i].m; }
+  const names=[["bq1","Transaksi · BQ-01"],["bq2","Pengiriman · BQ-02"],["bq3","Review & Sentimen · BQ-03"],["bq4","Keterlambatan & Rating · BQ-04"],["bq5","Pembatalan · BQ-05"]];
+  $("b6").innerHTML=names.map((n,i)=>'<button class="fr" data-go="'+n[0]+'"><span class="id">F-0'+(i+1)+'</span><span>'+esc(T[i+1].f)+'</span><span class="ar">→</span></button>').join("");
+  $("iv").innerHTML=names.map((n,i)=>'<div class="card"><div class="ch"><span class="badge">F-0'+(i+1)+'</span><h3>'+n[1]+'</h3><div class="rt"><button class="fb" style="background:#FFE8D6;box-shadow:none" data-go="'+n[0]+'">Buka grafik →</button></div></div><div class="bk tm"><h4>🔎 Temuan utama</h4><p>'+esc(T[i+1].t)+'</p></div><div class="bk mk"><h4>💡 Makna bisnis</h4><p>'+esc(T[i+1].m)+'</p></div></div>').join("");
+}
+
+/* ---------- banner, tampilan, render ---------- */
+function renderBanner(A){
+  const q=sel(), chips=[];
+  if(q.m!=="ALL") chips.push(["fMonth",mSh(q.m)]); if(q.z!=="ALL") chips.push(["fZone","Zona "+q.z]); if(q.s!=="ALL") chips.push(["fSent","Sentimen "+q.s]);
+  $("chips").innerHTML=chips.map(c=>'<span class="chip">'+esc(c[1])+'<button data-clr="'+c[0]+'" aria-label="Hapus filter '+esc(c[1])+'">✕</button></span>').join("");
+  $("reset").disabled=!chips.length;
+  ["fMonth","fZone","fSent"].forEach(id=>$(id).classList.toggle("on",$(id).value!=="ALL"));
+  $("fcount").innerHTML='Menampilkan <b id="fcn">'+fi(A.orders)+'</b> dari '+fi(DATA.length)+' pesanan';
+}
+function safe(fn,name,targetId){try{fn();}catch(e){console.error("Gagal memuat "+name+":",e);if(targetId&&$(targetId))$(targetId).innerHTML='<div class="empty">Gagal memuat '+name+'</div>';}}
+function setView(v){
+  VIEW=v;
+  [...$("nav").children].forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"page":"false"));
+  $("kpis").hidden=v!=="overview";
+  $("cards").hidden=v==="insights"; $("iv").hidden=v!=="insights";
+  document.querySelectorAll("#cards>[data-v]").forEach(c=>{const show=v==="overview"||c.dataset.v===v;c.hidden=!show;c.classList.toggle("solo",v!=="overview"&&show);});
+  const fb=$("fbar"); if(fb) place();
+}
+function render(flash){
+  const f=filtered(), A=agg(f); LAST=A;
+  safe(()=>renderBanner(A),"filter");
+  safe(()=>renderKPI(A),"KPI");
+  safe(()=>renderTren(A),"grafik tren","b1");
+  safe(()=>renderSent(A),"grafik sentimen","b3");
+  safe(()=>renderZone(A),"grafik zona","b2");
+  safe(()=>renderRating(A),"grafik rating","b4");
+  safe(()=>renderStatus(A),"status pesanan","b5");
+  safe(()=>applyTexts(A),"teks insight");
+  if(flash) document.querySelectorAll(".face.front").forEach(e=>{e.classList.remove("flash");void e.offsetWidth;e.classList.add("flash");});
+}
+function syncFlip(fc){const on=fc.classList.contains("flipped");fc.querySelectorAll("[data-flip]").forEach(b=>b.setAttribute("aria-pressed",on?"true":"false"));}
+function setExplain(on){
+  EXPLAIN=on; $("xb").setAttribute("aria-pressed",on?"true":"false"); $("xb").textContent=on?"📕 Tutup penjelasan":"📖 Mode penjelasan";
+  document.querySelectorAll(".fc[data-f]").forEach(fc=>{fc.classList.toggle("flipped",on);syncFlip(fc);});
+}
+/* banner sticky */
+function place(){
+  const fb=$("fbar"),ph=$("fph"); if(!fb||!ph) return;
+  if(!fb.classList.contains("stuck")) ph.style.minHeight=fb.offsetHeight+"px";
+  const stuck = window.innerWidth>900 && ph.getBoundingClientRect().top < 8;
+  fb.classList.toggle("stuck",stuck); if(!stuck){fb.classList.remove("open");$("fopen").setAttribute("aria-expanded","false");}
+}
+/* ---------- init ---------- */
+(function init(){
+  const h=new Date().getHours(), s=h>=5&&h<11?"pagi":h>=11&&h<15?"siang":h>=15&&h<18?"sore":"malam";
+  $("greet").textContent="Selamat "+s+", Ghina! 👋";
+  $("nav").innerHTML=NAV.map(n=>'<button class="nv" data-v="'+n[0]+'">'+n[1]+'<span>'+n[2]+'</span></button>').join("");
+  ["fMonth","fZone","fSent"].forEach(id=>$(id).addEventListener("change",()=>render(true)));
+  $("reset").addEventListener("click",()=>{["fMonth","fZone","fSent"].forEach(id=>$(id).value="ALL");render(true);});
+  $("fopen").addEventListener("click",()=>{const o=$("fbar").classList.toggle("open");$("fopen").setAttribute("aria-expanded",o?"true":"false");});
+  $("xb").addEventListener("click",()=>setExplain(!EXPLAIN));
+  document.addEventListener("click",e=>{
+    const fl=e.target.closest("[data-flip]"); if(fl){const fc=fl.closest(".fc");fc.classList.toggle("flipped");syncFlip(fc);return;}
+    const nv=e.target.closest(".nv"); if(nv){setView(nv.dataset.v);window.scrollTo({top:0,behavior:"smooth"});return;}
+    const go=e.target.closest("[data-go]"); if(go){setView(go.dataset.go);window.scrollTo({top:0,behavior:"smooth"});return;}
+    const cl=e.target.closest("[data-clr]"); if(cl){$(cl.dataset.clr).value="ALL";render(true);return;}
+    const tb=e.target.closest(".tab"); if(tb){TAB=tb.dataset.tab;document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t===tb?"true":"false"));if(LAST)safe(()=>renderTren(LAST),"grafik tren","b1");return;}
+  });
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){setExplain(false);document.querySelectorAll(".fc.flipped").forEach(fc=>{fc.classList.remove("flipped");syncFlip(fc);});$("fbar").classList.remove("open");}});
+  window.addEventListener("scroll",place,{passive:true});
+  window.addEventListener("resize",()=>{$("fbar").classList.remove("stuck");place();});
+  setView("overview"); render(false); place();
+})();
+</script></body></html>
